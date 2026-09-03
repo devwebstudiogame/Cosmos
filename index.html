@@ -9,12 +9,13 @@
 <style>
   :root{
     --void: #04050a;
-    --panel: rgba(13, 16, 28, 0.85);
+    --panel: rgba(13, 16, 28, 0.88);
     --panel-border: rgba(155, 127, 212, 0.25);
     --stardust: #f5c542;
     --cyan: #3ddbd9;
     --violet: #9b7fd4;
     --pink: #ff53a5;
+    --darkmatter: #a55eea;
     --danger: #ff4757;
     --success: #2ed573;
     --text: #eef1f6;
@@ -32,7 +33,7 @@
 
   /* HUD Header */
   .hud-top{
-    position:fixed; top:28px; left:28px; z-index:10;
+    position:fixed; top:24px; left:24px; z-index:10;
     display:flex; flex-direction:column; gap:2px;
     user-select:none; pointer-events:none;
     transition: opacity 0.4s ease;
@@ -40,35 +41,39 @@
   .hud-top.hidden{ opacity: 0; }
 
   .title{
-    font-family:'Cinzel', serif; font-weight:800; font-size:13px;
+    font-family:'Cinzel', serif; font-weight:800; font-size:12px;
     letter-spacing:0.18em; color:var(--violet);
     text-transform: uppercase;
   }
   .planet-name-hud{
-    font-family:'Cinzel', serif; font-weight:700; font-size:20px;
+    font-family:'Cinzel', serif; font-weight:700; font-size:18px;
     color:var(--cyan); margin-top:2px; text-shadow:0 0 12px rgba(61,219,217,0.5);
   }
   .shard-count{
     font-family:'Cinzel', serif; font-weight:800;
-    font-size:clamp(36px, 5.5vw, 56px); line-height:1;
+    font-size:clamp(32px, 4.8vw, 50px); line-height:1;
     color:var(--text);
-    text-shadow: 0 0 24px rgba(245, 197, 66, 0.35), 0 0 45px rgba(155, 127, 212, 0.2);
-    margin-top:6px;
+    text-shadow: 0 0 24px rgba(245, 197, 66, 0.35);
+    margin-top:4px;
   }
   .shard-count span.unit{
     font-family:'Inter',sans-serif; font-weight:500; font-size:0.38em;
     color:var(--text-dim); margin-left:8px; letter-spacing:0;
   }
+  .dm-count{
+    font-size:13px; font-weight:600; color:var(--darkmatter);
+    margin-top:4px; text-shadow:0 0 10px rgba(165, 94, 234, 0.4);
+  }
   .stats-row{
-    margin-top:10px; display:flex; gap:18px; font-size:13px; color:var(--text-dim);
+    margin-top:8px; display:flex; gap:14px; font-size:12.5px; color:var(--text-dim);
   }
   .stats-row b{ color:var(--cyan); font-weight:600; }
   .stats-row .g{ color:var(--stardust); font-weight:600; }
 
   /* HUD Controls */
   .hud-controls-right{
-    position:fixed; top:28px; right:28px; z-index:15;
-    display:flex; gap:10px;
+    position:fixed; top:24px; right:24px; z-index:15;
+    display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; max-width:600px;
   }
 
   .hud-btn{
@@ -77,20 +82,20 @@
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     color:var(--text);
-    font-family:'Inter',sans-serif; font-weight:600; font-size:13px;
-    padding:10px 18px; border-radius:10px;
+    font-family:'Inter',sans-serif; font-weight:600; font-size:12px;
+    padding:8px 14px; border-radius:10px;
     cursor:pointer;
     box-shadow: 0 8px 32px rgba(0,0,0,0.45);
     transition: all .2s ease;
   }
   .hud-btn:hover{ border-color: var(--cyan); transform: translateY(-2px); }
 
-  .shop-toggle{ position:fixed; right:28px; bottom:28px; z-index:15; padding:13px 22px; border-radius:12px; }
+  .shop-toggle{ position:fixed; right:24px; bottom:24px; z-index:15; padding:12px 20px; border-radius:12px; }
 
-  /* Text Float Animation */
+  /* Floating Animation */
   .floater{
     position:fixed; z-index:20; pointer-events:none;
-    font-family:'Cinzel', serif; font-weight:700; font-size:22px;
+    font-family:'Cinzel', serif; font-weight:700; font-size:20px;
     color:var(--stardust);
     text-shadow:0 0 14px rgba(245, 197, 66, 0.6);
     animation: floatUp 0.85s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
@@ -104,8 +109,8 @@
   /* Shop Drawer */
   .shop{
     position:fixed; left:0; right:0; bottom:0; z-index:14;
-    display:flex; justify-content:center; gap:14px;
-    padding: 24px 20px 28px;
+    display:flex; justify-content:center; gap:12px;
+    padding: 20px 16px 24px;
     background: linear-gradient(180deg, rgba(4,5,10,0) 0%, rgba(4,5,10,0.88) 25%, rgba(4,5,10,0.98) 100%);
     transform: translateY(115%);
     transition: transform .35s cubic-bezier(.2,.8,.3,1);
@@ -114,34 +119,34 @@
   .shop.open{ transform: translateY(0); }
 
   .card{
-    width:215px; background: var(--panel);
+    width:205px; background: var(--panel);
     border:1px solid var(--panel-border);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border-radius: 14px; padding:16px;
+    border-radius: 14px; padding:14px;
     box-shadow: 0 10px 34px rgba(0,0,0,0.4);
     display:flex; flex-direction:column; gap:8px;
   }
   .card.featured{ border-color: var(--stardust); background: rgba(245, 197, 66, 0.06); }
-  .card .name{ font-weight:600; font-size:14px; color:var(--text); display:flex; align-items:center; gap:8px; }
+  .card .name{ font-weight:600; font-size:13.5px; color:var(--text); display:flex; align-items:center; gap:8px; }
   .card .dot{ width:8px; height:8px; border-radius:50%; flex:none; }
-  .card .desc{ font-size:12px; color:var(--text-dim); line-height:1.4; min-height:34px; }
-  .card .level{ font-size:11.5px; color:var(--text-dim); }
+  .card .desc{ font-size:11.5px; color:var(--text-dim); line-height:1.4; min-height:34px; }
+  .card .level{ font-size:11px; color:var(--text-dim); }
   .card .level b{ color:var(--stardust); }
   
   .buy{
     margin-top:4px; border:none; border-radius:8px; padding:8px 12px;
-    font-family:'Inter',sans-serif; font-weight:600; font-size:12.5px;
+    font-family:'Inter',sans-serif; font-weight:600; font-size:12px;
     background: linear-gradient(135deg, rgba(155, 127, 212, 0.2), rgba(61, 219, 217, 0.1));
     border:1px solid rgba(155, 127, 212, 0.35); color: var(--text);
     cursor:pointer; transition: all .15s ease;
     display:flex; justify-content:space-between; align-items:center;
   }
   .buy:hover:not(:disabled){ border-color: var(--cyan); background: rgba(61, 219, 217, 0.2); }
-  .buy:disabled{ opacity:0.3; cursor:not-allowed; }
+  .buy:disabled{ opacity:0.35; cursor:not-allowed; }
   .buy .cost{ color:var(--stardust); font-weight:600; }
 
-  /* POP-UPS & MODALES */
+  /* Modales */
   .modal-overlay{
     position:fixed; inset:0; z-index:50;
     background: rgba(4, 5, 10, 0.82);
@@ -154,13 +159,13 @@
   .modal-overlay.active{ opacity:1; pointer-events:auto; }
 
   .modal-box{
-    width:90%; max-width:480px;
+    width:90%; max-width:520px;
     background: var(--panel);
     border:1px solid var(--panel-border);
     backdrop-filter: blur(24px);
-    border-radius:20px; padding:28px;
+    border-radius:20px; padding:26px;
     box-shadow: 0 25px 60px rgba(0,0,0,0.7), 0 0 40px rgba(155, 127, 212, 0.15);
-    display:flex; flex-direction:column; gap:18px;
+    display:flex; flex-direction:column; gap:16px;
     transform: scale(0.92) translateY(10px);
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     max-height: 85vh; overflow-y: auto;
@@ -169,111 +174,78 @@
 
   .modal-header{ text-align:center; }
   .modal-title{
-    margin:0; font-family:'Cinzel', serif; font-size:20px; font-weight:800;
+    margin:0; font-family:'Cinzel', serif; font-size:19px; font-weight:800;
     color:var(--text); letter-spacing:0.12em;
-    text-shadow: 0 0 15px rgba(255,255,255,0.2);
   }
   .modal-subtitle{
-    font-size:12.5px; color:var(--text-dim); margin-top:6px; line-height:1.4;
+    font-size:12px; color:var(--text-dim); margin-top:4px; line-height:1.4;
   }
 
   .modal-options{ display:flex; flex-direction:column; gap:10px; }
 
-  /* Audio Controls Panel */
-  .audio-section{
-    background: rgba(4, 5, 10, 0.5);
-    border: 1px solid var(--panel-border);
-    border-radius: 12px;
-    padding: 14px 16px;
-    display: flex; flex-direction: column; gap: 12px;
-  }
-  .audio-row{
-    display: flex; justify-content: space-between; align-items: center;
-    font-size: 13px; color: var(--text);
-  }
-  .audio-row label{ font-weight: 500; }
-  .audio-slider-container{ display: flex; align-items: center; gap: 10px; width: 60%; }
-  .audio-slider{
-    width: 100%; accent-color: var(--cyan); cursor: pointer;
-  }
-
-  /* Market UI Styles */
-  .market-row{
+  /* Lists inside Modals (Market, R&D, Achievements) */
+  .panel-list{ display:flex; flex-direction:column; gap:10px; max-height:48vh; overflow-y:auto; padding-right:4px; }
+  .panel-item{
     background: rgba(4, 5, 10, 0.5);
     border: 1px solid var(--panel-border);
     border-radius: 12px; padding: 12px 14px;
     display: flex; align-items: center; justify-content: space-between; gap: 10px;
   }
-  .market-info{ flex: 1; display: flex; flex-direction: column; gap: 2px; }
-  .market-title{ font-size: 13.5px; font-weight: 600; color: var(--text); }
-  .market-qty{ font-size: 11.5px; color: var(--text-dim); }
-  .market-price{ font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 4px; }
-  .market-price.trend-up{ color: var(--success); }
-  .market-price.trend-down{ color: var(--danger); }
-  .market-price.trend-flat{ color: var(--text-dim); }
-  .market-actions{ display: flex; gap: 6px; }
+  .panel-item-info{ flex: 1; display: flex; flex-direction: column; gap: 2px; }
+  .panel-item-title{ font-size: 13px; font-weight: 600; color: var(--text); }
+  .panel-item-sub{ font-size: 11.5px; color: var(--text-dim); }
 
+  .ach-badge{
+    padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600;
+  }
+  .ach-badge.done{ background: rgba(46, 213, 115, 0.15); border:1px solid var(--success); color:var(--success); }
+  .ach-badge.todo{ background: rgba(127, 137, 161, 0.15); border:1px solid var(--text-dim); color:var(--text-dim); }
+
+  /* Audio Controls */
+  .audio-section{
+    background: rgba(4, 5, 10, 0.5); border: 1px solid var(--panel-border);
+    border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px;
+  }
+  .audio-row{ display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; }
+  .audio-slider{ width: 55%; accent-color: var(--cyan); cursor: pointer; }
+
+  /* Buttons */
   .btn-action{
-    border:1px solid var(--panel-border);
-    background: rgba(155, 127, 212, 0.12);
-    color:var(--text);
-    padding:12px 14px; border-radius:12px;
-    font-family:'Inter', sans-serif; font-weight:600; font-size:13px;
-    cursor:pointer; transition: all 0.2s ease;
-    display:flex; align-items:center; justify-content:center; gap:8px;
-    text-align:center;
+    border:1px solid var(--panel-border); background: rgba(155, 127, 212, 0.12); color:var(--text);
+    padding:11px 14px; border-radius:12px; font-family:'Inter', sans-serif; font-weight:600; font-size:12.5px;
+    cursor:pointer; transition: all 0.2s ease; display:flex; align-items:center; justify-content:center; gap:8px;
   }
   .btn-action:hover:not(:disabled){
-    border-color:var(--cyan);
-    background: rgba(61, 219, 217, 0.18);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(61, 219, 217, 0.2);
+    border-color:var(--cyan); background: rgba(61, 219, 217, 0.18); transform: translateY(-1px);
   }
   .btn-action:disabled{ opacity:0.35; cursor:not-allowed; }
-  .btn-action.primary{
-    background: linear-gradient(135deg, rgba(61, 219, 217, 0.3), rgba(155, 127, 212, 0.3));
-    border-color: var(--cyan);
-  }
+  .btn-action.primary{ background: linear-gradient(135deg, rgba(61, 219, 217, 0.25), rgba(155, 127, 212, 0.25)); border-color: var(--cyan); }
+  .btn-action.purple{ background: linear-gradient(135deg, rgba(165, 94, 234, 0.3), rgba(155, 127, 212, 0.2)); border-color: var(--darkmatter); }
   .btn-action.danger{ border-color: rgba(255, 71, 87, 0.4); background: rgba(255, 71, 87, 0.1); color:#ff6b81; }
-  .btn-action.danger:hover{ border-color: var(--danger); background: rgba(255, 71, 87, 0.25); box-shadow: 0 4px 16px rgba(255, 71, 87, 0.3); }
 
-  .btn-link{
-    border:none; background:transparent; color:var(--text-dim);
-    font-size:12.5px; cursor:pointer; text-align:center; margin-top:4px;
-    transition: color 0.2s ease;
-  }
+  .btn-link{ border:none; background:transparent; color:var(--text-dim); font-size:12px; cursor:pointer; text-align:center; margin-top:2px; }
   .btn-link:hover{ color:var(--text); text-decoration:underline; }
 
   .input-field{
-    width:100%; background: rgba(4, 5, 10, 0.6);
-    border:1px solid var(--panel-border); border-radius:10px;
-    padding:12px; color:var(--stardust); font-family:monospace; font-size:12px;
-    resize:vertical; min-height:80px; outline:none;
+    width:100%; background: rgba(4, 5, 10, 0.6); border:1px solid var(--panel-border); border-radius:10px;
+    padding:10px; color:var(--stardust); font-family:monospace; font-size:11.5px; resize:vertical; min-height:75px; outline:none;
   }
-  .input-field:focus{ border-color:var(--cyan); }
 
   .toast{
-    position:fixed; top:24px; left:50%; transform:translateX(-50%) translateY(-60px);
-    z-index:100; background: var(--panel); border:1px solid var(--cyan);
-    color:var(--text); padding:10px 22px; border-radius:30px;
-    font-size:13px; font-weight:500;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.5), 0 0 15px rgba(61, 219, 217, 0.2);
-    opacity:0; transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-    pointer-events:none;
+    position:fixed; top:20px; left:50%; transform:translateX(-50%) translateY(-60px); z-index:100;
+    background: var(--panel); border:1px solid var(--cyan); color:var(--text);
+    padding:9px 20px; border-radius:30px; font-size:12.5px; font-weight:500;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5); opacity:0; transition: all 0.35s ease; pointer-events:none;
   }
   .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
 
-  .hint{
-    position:fixed; bottom:28px; left:28px; z-index:10;
-    font-size:12px; color:var(--text-dim); max-width:220px; line-height:1.4; pointer-events:none;
-  }
+  .hint{ position:fixed; bottom:24px; left:24px; z-index:10; font-size:11.5px; color:var(--text-dim); max-width:210px; line-height:1.4; pointer-events:none; }
 
   @media (max-width:640px){
-    .hud-top{ left:18px; top:18px; }
-    .hud-controls-right{ top:18px; right:18px; }
+    .hud-top{ left:16px; top:16px; }
+    .hud-controls-right{ top:16px; right:16px; max-width:280px; }
     .hint{ display:none; }
-    .card{ width:155px; }
-    .card .desc{ min-height:48px; font-size:11px; }
+    .card{ width:145px; }
   }
 </style>
 </head>
@@ -287,19 +259,22 @@
   <div class="title">COSMOS — GALACTIQUE</div>
   <div class="planet-name-hud" id="planetNameHud">Astéroïde Stérile</div>
   <div class="shard-count"><span id="stardustCount">0</span><span class="unit">poussières</span></div>
+  <div class="dm-count" id="dmHudDisplay" style="display:none;">⚛️ <span id="dmCount">0</span> Matière Noire</div>
   <div class="stats-row">
     <div>Par clic <b id="clickPowerLabel">1</b></div>
-    <div>Par seconde <span class="g" id="cpsLabel">0</span></div>
+    <div>Par sec <span class="g" id="cpsLabel">0</span></div>
   </div>
 </div>
 
 <div class="hud-controls-right" id="hudControlsRight" style="display:none;">
   <button class="hud-btn" id="openMarketBtn">📈 Marché</button>
+  <button class="hud-btn" id="openRdBtn">🔬 R&D</button>
+  <button class="hud-btn" id="openAscensionBtn">🔮 Ascension</button>
+  <button class="hud-btn" id="openAchBtn">🏆 Succès</button>
   <button class="hud-btn" id="openPauseMenuBtn">⚙️ Menu</button>
 </div>
 
 <button class="hud-btn shop-toggle" id="shopToggle" style="display:none;">Passerelle de Commandement ▴</button>
-
 <div class="hint">Extracteur cosmique : cliquez sur l'astre central pour récolter de la matière et des minerais rares.</div>
 
 <!-- SHOP -->
@@ -333,11 +308,11 @@
   </div>
 </div>
 
-<!-- POP-UPS STANDARD & MODALES -->
+<!-- MODALES & POP-UPS -->
 <div class="modal-overlay active" id="startMenuModal">
   <div class="modal-box">
     <div class="modal-header">
-      <h1 class="modal-title" style="font-size:26px; color:var(--stardust);">COSMOS</h1>
+      <h1 class="modal-title" style="font-size:24px; color:var(--stardust);">COSMOS</h1>
       <div class="modal-subtitle">Simulation d'extraction spatiale 3D HD</div>
     </div>
     <div class="modal-options">
@@ -349,26 +324,80 @@
   </div>
 </div>
 
-<!-- MARCHÉ INTERGALACTIQUE MODAL -->
+<!-- MARCHÉ MODAL -->
 <div class="modal-overlay" id="marketModal">
-  <div class="modal-box" style="max-width:540px;">
+  <div class="modal-box">
     <div class="modal-header">
       <h2 class="modal-title" style="color:var(--cyan)">MARCHÉ INTERGALACTIQUE</h2>
-      <div class="modal-subtitle">Négociez vos minerais rares. Les cours changent toutes les 30 secondes !</div>
-      <div style="font-size:12px; color:var(--stardust); margin-top:6px; font-weight:600;">
-        ⏳ Fluctuation des cours dans : <span id="marketTimer">30</span>s
+      <div class="modal-subtitle">Négociez vos minerais rares. Cours ajustés toutes les 30s.</div>
+      <div style="font-size:12px; color:var(--stardust); margin-top:4px; font-weight:600;">
+        ⏳ Fluctuation dans : <span id="marketTimer">30</span>s
       </div>
     </div>
-    <div id="marketList" style="display:flex; flex-direction:column; gap:10px; max-height:45vh; overflow-y:auto; padding-right:4px;">
-      <!-- Généré dynamiquement en JS -->
-    </div>
-    <div class="modal-options" style="margin-top:8px;">
+    <div class="panel-list" id="marketList"></div>
+    <div class="modal-options">
       <button class="btn-action primary" id="btnSellAllMarket">💰 Tout Vendre</button>
     </div>
     <button class="btn-link" id="btnCloseMarket">Fermer la Bourse</button>
   </div>
 </div>
 
+<!-- R&D MODAL -->
+<div class="modal-overlay" id="rdModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2 class="modal-title" style="color:var(--cyan)">ARBRE DE RECHERCHE & DÉVELOPPEMENT</h2>
+      <div class="modal-subtitle">Investissez votre Matière Noire dans des spécialisations permanentes.</div>
+      <div style="font-size:13px; color:var(--darkmatter); margin-top:6px; font-weight:700;">
+        Matière Noire disponible : <span id="rdDmAvailable">0</span> ⚛️
+      </div>
+    </div>
+    <div class="panel-list" id="rdList"></div>
+    <button class="btn-link" id="btnCloseRd">Fermer le Laboratoire</button>
+  </div>
+</div>
+
+<!-- ASCENSION MODAL -->
+<div class="modal-overlay" id="ascensionModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2 class="modal-title" style="color:var(--darkmatter)">ASCENSION GALACTIQUE</h2>
+      <div class="modal-subtitle">Réinitialisez la galaxie pour absorber de la Matière Noire.</div>
+    </div>
+    <div style="background:rgba(165, 94, 234, 0.1); border:1px solid rgba(165, 94, 234, 0.3); border-radius:12px; padding:16px; text-align:center;">
+      <div style="font-size:13px; color:var(--text-dim);">Matière Noire à récolter :</div>
+      <div style="font-size:28px; font-weight:800; color:var(--darkmatter); margin:6px 0;" id="pendingDmGain">+0 ⚛️</div>
+      <div style="font-size:11.5px; color:var(--text-dim);" id="ascensionConditionText">Requis : 100 000 poussières d'étoiles</div>
+    </div>
+    <div class="modal-subtitle" style="font-size:11.5px; line-height:1.5;">
+      <b>Effets du Prestige :</b><br>
+      • Remet à zéro : Poussières, Bâtiments et Planète.<br>
+      • Conserve : Matière Noire, Recherches R&D et Succès.<br>
+      • Bonus : +15 % de production globale par Matière Noire possédée.
+    </div>
+    <div class="modal-options">
+      <button class="btn-action purple" id="btnConfirmAscend" disabled>🔮 Déclencher l'Ascension</button>
+    </div>
+    <button class="btn-link" id="btnCloseAscension">Annuler</button>
+  </div>
+</div>
+
+<!-- ACHIEVEMENTS MODAL -->
+<div class="modal-overlay" id="achievementsModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2 class="modal-title" style="color:var(--stardust)">HAUTS FAITS & TROPHÉES</h2>
+      <div class="modal-subtitle">Validez des objectifs pour accumuler des bonus de production permanents.</div>
+      <div style="font-size:12px; color:var(--success); margin-top:4px; font-weight:600;">
+        Bonus total actif : <span id="totalAchBonus">+0%</span>
+      </div>
+    </div>
+    <div class="panel-list" id="achievementsList"></div>
+    <button class="btn-link" id="btnCloseAch">Fermer</button>
+  </div>
+</div>
+
+<!-- PAUSE / MENU MODAL -->
 <div class="modal-overlay" id="pauseMenuModal">
   <div class="modal-box">
     <div class="modal-header">
@@ -376,18 +405,15 @@
       <div class="modal-subtitle" id="pauseSaveInfo">Dernière sauvegarde : —</div>
     </div>
 
-    <!-- Réglages Audio -->
     <div class="audio-section">
       <div class="audio-row">
         <label for="volumeRange">🔊 Volume général</label>
-        <div class="audio-slider-container">
-          <input type="range" class="audio-slider" id="volumeRange" min="0" max="1" step="0.05" value="0.7">
-          <span id="volumeVal" style="font-size:12px; width:30px;">70%</span>
-        </div>
+        <input type="range" class="audio-slider" id="volumeRange" min="0" max="1" step="0.05" value="0.7">
+        <span id="volumeVal" style="font-size:11.5px; width:30px;">70%</span>
       </div>
       <div class="audio-row">
-        <label for="muteToggle">🔇 Activer le mode muet</label>
-        <input type="checkbox" id="muteToggle" style="accent-color: var(--cyan); width: 18px; height: 18px; cursor: pointer;">
+        <label for="muteToggle">🔇 Mode muet</label>
+        <input type="checkbox" id="muteToggle" style="accent-color: var(--cyan); width: 16px; height: 16px; cursor: pointer;">
       </div>
     </div>
 
@@ -402,6 +428,7 @@
   </div>
 </div>
 
+<!-- IMPORT MODAL -->
 <div class="modal-overlay" id="importModal">
   <div class="modal-box">
     <div class="modal-header">
@@ -416,14 +443,15 @@
   </div>
 </div>
 
+<!-- RESET CONFIRM MODAL -->
 <div class="modal-overlay" id="confirmResetModal">
   <div class="modal-box">
     <div class="modal-header">
       <h2 class="modal-title" style="color:var(--danger)">ATTENTION</h2>
-      <div class="modal-subtitle">Voulez-vous vraiment effacer toute votre progression ?</div>
+      <div class="modal-subtitle">Effacer définitivement l'ensemble de vos données ?</div>
     </div>
     <div class="modal-options">
-      <button class="btn-action danger" id="btnConfirmReset">Effacer définitivement</button>
+      <button class="btn-action danger" id="btnConfirmReset">Réinitialiser Tout</button>
     </div>
     <button class="btn-link" id="btnCloseConfirmReset">Annuler</button>
   </div>
@@ -436,12 +464,20 @@
 
   const PLANETS = [
     { name: "Astéroïde Stérile", cost: 0, multiplier: 1, desc: "Rocher spatial météoritique riche en débris brut.", oreName: "Régolithe Brut", basePrice: 15, icon: "🪨" },
-    { name: "Planète Océan", cost: 500, multiplier: 5, desc: "Monde aquatique à couche nuageuse et anneaux d'eau. Gains x5.", oreName: "Eau Lourde Quantique", basePrice: 120, icon: "💧" },
-    { name: "Géante Gazeuse", cost: 5000, multiplier: 25, desc: "Colosse atmosphérique aux anneaux dorés étincelants. Gains x25.", oreName: "Hélium-3 Dense", basePrice: 900, icon: "☁️" },
-    { name: "Exoplanète de Cristal", cost: 50000, multiplier: 120, desc: "Structure cristalline aux éclats flottants en orbite. Gains x120.", oreName: "Quartz Incandescent", basePrice: 7500, icon: "💎" },
-    { name: "Étoile à Neutrons", cost: 500000, multiplier: 750, desc: "Cœur stellaire incandescent entouré d'une corona d'énergie. Gains x750.", oreName: "Neutronium Pur", basePrice: 60000, icon: "⚡" },
-    { name: "Pulsar Magnétique", cost: 5000000, multiplier: 5000, desc: "Astre magnétique projetant deux faisceaux de lumière. Gains x5 000.", oreName: "Matière Polarisée", basePrice: 500000, icon: "🧲" },
-    { name: "Trou Noir Supermassif", cost: 50000000, multiplier: 35000, desc: "Singularité dévorante entourée d'un vortex d'accrétion. Gains x35 000.", oreName: "Cœur de Singularité", basePrice: 4000000, icon: "🕳️" }
+    { name: "Planète Océan", cost: 500, multiplier: 5, desc: "Monde aquatique à couche nuageuse. Gains x5.", oreName: "Eau Lourde Quantique", basePrice: 120, icon: "💧" },
+    { name: "Géante Gazeuse", cost: 5000, multiplier: 25, desc: "Colosse atmosphérique aux anneaux dorés. Gains x25.", oreName: "Hélium-3 Dense", basePrice: 900, icon: "☁️" },
+    { name: "Exoplanète de Cristal", cost: 50000, multiplier: 120, desc: "Structure cristalline aux éclats flottants. Gains x120.", oreName: "Quartz Incandescent", basePrice: 7500, icon: "💎" },
+    { name: "Étoile à Neutrons", cost: 500000, multiplier: 750, desc: "Cœur stellaire incandescent. Gains x750.", oreName: "Neutronium Pur", basePrice: 60000, icon: "⚡" },
+    { name: "Pulsar Magnétique", cost: 5000000, multiplier: 5000, desc: "Astre magnétique projetant des faisceaux. Gains x5 000.", oreName: "Matière Polarisée", basePrice: 500000, icon: "🧲" },
+    { name: "Trou Noir Supermassif", cost: 50000000, multiplier: 35000, desc: "Singularité dévorante. Gains x35 000.", oreName: "Cœur de Singularité", basePrice: 4000000, icon: "🕳️" }
+  ];
+
+  const INITIAL_ACHIEVEMENTS = [
+    { id: 'stardust_1k', name: 'Poussière d\'Étoiles', desc: 'Accumuler 1 000 poussières', reqType: 'stardust', reqVal: 1000, done: false, bonus: 0.02 },
+    { id: 'stardust_1m', name: 'Magnat Cosmique', desc: 'Accumuler 1 000 000 poussières', reqType: 'stardust', reqVal: 1000000, done: false, bonus: 0.05 },
+    { id: 'satellites_25', name: 'Flotte Orbitale', desc: 'Acheter 25 Satellites Récolteurs', reqType: 'minerLevel', reqVal: 25, done: false, bonus: 0.03 },
+    { id: 'ores_10', name: 'Prospecteur Rare', desc: 'Extraire 10 minerais rares au total', reqType: 'totalOres', reqVal: 10, done: false, bonus: 0.04 },
+    { id: 'ascend_1', name: 'Renaissance', desc: 'Effectuer 1 Ascension', reqType: 'ascensions', reqVal: 1, done: false, bonus: 0.05 }
   ];
 
   const state = { 
@@ -454,29 +490,29 @@
     muted: false,
     ores: [0, 0, 0, 0, 0, 0, 0],
     orePrices: [15, 120, 900, 7500, 60000, 500000, 4000000],
-    oreTrends: [0, 0, 0, 0, 0, 0, 0]
+    oreTrends: [0, 0, 0, 0, 0, 0, 0],
+    darkMatter: 0,
+    totalAscensions: 0,
+    totalOresMined: 0,
+    rd: { tactile: 0, auto: 0, market: 0 },
+    achievements: JSON.parse(JSON.stringify(INITIAL_ACHIEVEMENTS))
   };
 
-  let gameStarted = false, lastSaveTime = null;
-  let marketCountdown = 30;
-  const SAVE_KEY = "cosmos-save-v5";
+  let gameStarted = false, lastSaveTime = null, marketCountdown = 30;
+  const SAVE_KEY = "cosmos-save-v6";
 
-  /* MOTEUR AUDIO SYNTHÉTIQUE (Web Audio API) */
+  /* AUDIO SYNTHÉTIQUE */
   let audioCtx = null;
-
   function initAudioCtx(){
     if(!audioCtx){
-      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-      if(AudioContextClass) audioCtx = new AudioContextClass();
+      const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+      if(AudioCtxClass) audioCtx = new AudioCtxClass();
     }
-    if(audioCtx && audioCtx.state === 'suspended'){
-      audioCtx.resume();
-    }
+    if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
   }
 
   function playSound(type){
     if(!audioCtx || state.muted || state.volume <= 0) return;
-
     const now = audioCtx.currentTime;
     const masterGain = audioCtx.createGain();
     masterGain.gain.setValueAtTime(state.volume, now);
@@ -488,77 +524,80 @@
       osc.type = "sine";
       osc.frequency.setValueAtTime(320 + Math.random() * 140, now);
       osc.frequency.exponentialRampToValueAtTime(80, now + 0.08);
-
-      gain.gain.setValueAtTime(0.35, now);
+      gain.gain.setValueAtTime(0.3, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
-
-      osc.connect(gain);
-      gain.connect(masterGain);
-      osc.start(now);
-      osc.stop(now + 0.08);
-
+      osc.connect(gain); gain.connect(masterGain);
+      osc.start(now); osc.stop(now + 0.08);
     } else if(type === "rare"){
-      const freqs = [523.25, 659.25, 783.99, 1046.50];
-      freqs.forEach((f, idx) => {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(f, now + idx * 0.03);
-
+      [523.25, 659.25, 783.99, 1046.50].forEach((f, idx) => {
+        const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+        osc.type = "sine"; osc.frequency.setValueAtTime(f, now + idx * 0.03);
         gain.gain.setValueAtTime(0.2, now + idx * 0.03);
         gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.03 + 0.12);
-
-        osc.connect(gain);
-        gain.connect(masterGain);
-        osc.start(now + idx * 0.03);
-        osc.stop(now + idx * 0.03 + 0.12);
+        osc.connect(gain); gain.connect(masterGain);
+        osc.start(now + idx * 0.03); osc.stop(now + idx * 0.03 + 0.12);
       });
-
     } else if(type === "buy"){
-      const freqs = [440, 554.37, 659.25];
-      freqs.forEach((f, idx) => {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = "triangle";
-        osc.frequency.setValueAtTime(f, now + idx * 0.04);
-
+      [440, 554.37, 659.25].forEach((f, idx) => {
+        const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+        osc.type = "triangle"; osc.frequency.setValueAtTime(f, now + idx * 0.04);
         gain.gain.setValueAtTime(0.2, now + idx * 0.04);
         gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.04 + 0.15);
-
-        osc.connect(gain);
-        gain.connect(masterGain);
-        osc.start(now + idx * 0.04);
-        osc.stop(now + idx * 0.04 + 0.15);
+        osc.connect(gain); gain.connect(masterGain);
+        osc.start(now + idx * 0.04); osc.stop(now + idx * 0.04 + 0.15);
       });
-
     } else if(type === "unlock"){
-      const freqs = [261.63, 329.63, 392.00, 523.25, 659.25];
-      freqs.forEach((f, idx) => {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(f, now + idx * 0.07);
-
+      [261.63, 329.63, 392.00, 523.25, 659.25].forEach((f, idx) => {
+        const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+        osc.type = "sine"; osc.frequency.setValueAtTime(f, now + idx * 0.07);
         gain.gain.setValueAtTime(0.25, now + idx * 0.07);
         gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.07 + 0.35);
-
-        osc.connect(gain);
-        gain.connect(masterGain);
-        osc.start(now + idx * 0.07);
-        osc.stop(now + idx * 0.07 + 0.35);
+        osc.connect(gain); gain.connect(masterGain);
+        osc.start(now + idx * 0.07); osc.stop(now + idx * 0.07 + 0.35);
       });
     }
   }
 
+  /* CALCULS DU JEU */
   function currentPlanet(){ return PLANETS[state.planetIndex]; }
-  function clickPower(){ return (1 + state.clickLevel * 1); }
-  function minerRate(){ return (state.minerLevel * 1.5); }
-  function globalMultiplier(){ return (1 + state.multLevel * 0.3) * currentPlanet().multiplier; }
+  
+  function getAchievementBonus(){
+    let bonus = 0;
+    state.achievements.forEach(a => { if(a.done) bonus += a.bonus; });
+    return bonus;
+  }
+
+  function rareOreChance(){
+    return 0.12 + (state.rd.tactile * 0.02);
+  }
+
+  function clickPower(){ 
+    return (1 + state.clickLevel * 1) * (1 + state.rd.tactile * 0.5); 
+  }
+  
+  function minerRate(){ 
+    return (state.minerLevel * 1.5) * (1 + state.rd.auto * 0.5); 
+  }
+
+  function globalMultiplier(){ 
+    const darkMatterBoost = 1 + (state.darkMatter * 0.15);
+    const achBoost = 1 + getAchievementBonus();
+    return (1 + state.multLevel * 0.3) * currentPlanet().multiplier * darkMatterBoost * achBoost; 
+  }
 
   function cost(base, level){ return Math.round(base * Math.pow(1.16, level)); }
   function clickCost(){ return cost(10, state.clickLevel); }
-  function minerCost(){ return cost(25, state.minerLevel); }
+  function minerCost(){ 
+    const baseCost = cost(25, state.minerLevel);
+    const discount = Math.max(0.5, 1 - (state.rd.auto * 0.05));
+    return Math.round(baseCost * discount); 
+  }
   function multCost(){ return cost(150, state.multLevel); }
+
+  function getDarkMatterGain(){
+    if(state.stardust < 100000) return 0;
+    return Math.floor(Math.sqrt(state.stardust / 100000));
+  }
 
   function openModal(id){ document.getElementById(id).classList.add("active"); }
   function closeModal(id){ document.getElementById(id).classList.remove("active"); }
@@ -570,10 +609,29 @@
     setTimeout(() => toast.classList.remove("show"), 2600);
   }
 
+  function checkAchievements(){
+    state.achievements.forEach(a => {
+      if(!a.done){
+        let val = 0;
+        if(a.reqType === 'stardust') val = state.stardust;
+        else if(a.reqType === 'minerLevel') val = state.minerLevel;
+        else if(a.reqType === 'totalOres') val = state.totalOresMined;
+        else if(a.reqType === 'ascensions') val = state.totalAscensions;
+
+        if(val >= a.reqVal){
+          a.done = true;
+          playSound("unlock");
+          showToast(`🏆 Succès débloqué : ${a.name} (+${Math.round(a.bonus*100)}% Prod)`);
+        }
+      }
+    });
+  }
+
   function updateMarketPrices(){
     PLANETS.forEach((p, idx) => {
       const oldPrice = state.orePrices[idx] || p.basePrice;
-      const factor = 0.55 + Math.random() * 0.90;
+      const minFactor = 0.55 + (state.rd.market * 0.05);
+      const factor = minFactor + Math.random() * (1.45 - minFactor);
       const newPrice = Math.max(1, Math.round(p.basePrice * factor));
       state.orePrices[idx] = newPrice;
       state.oreTrends[idx] = newPrice > oldPrice ? 1 : (newPrice < oldPrice ? -1 : 0);
@@ -585,7 +643,7 @@
       localStorage.setItem(SAVE_KEY, JSON.stringify(state));
       lastSaveTime = new Date();
       updateSaveTexts();
-      if(manual) showToast("Partie sauvegardée avec succès !");
+      if(manual) showToast("Partie sauvegardée !");
     }catch(e){}
   }
 
@@ -593,10 +651,20 @@
     try{
       const raw = localStorage.getItem(SAVE_KEY);
       if(raw){ 
-        Object.assign(state, JSON.parse(raw)); 
+        const loaded = JSON.parse(raw);
+        Object.assign(state, loaded); 
         if(!Array.isArray(state.ores)) state.ores = [0,0,0,0,0,0,0];
         if(!Array.isArray(state.orePrices)) state.orePrices = PLANETS.map(p => p.basePrice);
         if(!Array.isArray(state.oreTrends)) state.oreTrends = [0,0,0,0,0,0,0];
+        if(!state.rd) state.rd = { tactile: 0, auto: 0, market: 0 };
+        
+        // Merge achievements for retro-compatibility
+        INITIAL_ACHIEVEMENTS.forEach(initA => {
+          if(!state.achievements.some(a => a.id === initA.id)){
+            state.achievements.push(initA);
+          }
+        });
+
         lastSaveTime = new Date(); 
         return true; 
       }
@@ -641,10 +709,6 @@
   const buyPlanetBtn = document.getElementById("buy-planet");
   const planetDescEl = document.getElementById("planetDesc");
 
-  const volumeRange = document.getElementById("volumeRange");
-  const volumeVal = document.getElementById("volumeVal");
-  const muteToggle = document.getElementById("muteToggle");
-
   function fmt(n){
     if(n < 1000) return Math.floor(n).toString();
     const units = ["k","M","G","T","P","E"];
@@ -653,6 +717,7 @@
     return num.toFixed(num < 10 ? 2 : 1) + units[u];
   }
 
+  /* RENDUS DES INTERFACES MODALES */
   function renderMarketUI(){
     const list = document.getElementById("marketList");
     if(!list) return;
@@ -662,23 +727,24 @@
       if(i > state.planetIndex) return;
 
       const count = state.ores[i] || 0;
-      const price = state.orePrices[i] || p.basePrice;
+      const basePrice = state.orePrices[i] || p.basePrice;
+      const price = Math.round(basePrice * (1 + state.rd.market * 0.15));
       const trend = state.oreTrends[i] || 0;
       const trendIcon = trend > 0 ? "▲" : (trend < 0 ? "▼" : "•");
       const trendClass = trend > 0 ? "trend-up" : (trend < 0 ? "trend-down" : "trend-flat");
 
       const row = document.createElement("div");
-      row.className = "market-row";
+      row.className = "panel-item";
       row.innerHTML = `
-        <div class="market-info">
-          <div class="market-title">${p.icon} <b>${p.oreName}</b></div>
-          <div class="market-qty">Stock : <b style="color:var(--stardust);">${count}</b></div>
+        <div class="panel-item-info">
+          <div class="panel-item-title">${p.icon} <b>${p.oreName}</b></div>
+          <div class="panel-item-sub">Stock : <b style="color:var(--stardust);">${count}</b></div>
         </div>
-        <div class="market-price ${trendClass}">
+        <div class="market-price ${trendClass}" style="font-size:12.5px; font-weight:700;">
           ${fmt(price)} poussières <span style="font-size:11px;">${trendIcon}</span>
         </div>
-        <div class="market-actions">
-          <button class="buy" onclick="window.sellOre(${i}, 1)" ${count < 1 ? 'disabled' : ''}>Vendre 1</button>
+        <div style="display:flex; gap:6px;">
+          <button class="buy" onclick="window.sellOre(${i}, 1)" ${count < 1 ? 'disabled' : ''}>1</button>
           <button class="buy" onclick="window.sellOre(${i}, 'all')" ${count < 1 ? 'disabled' : ''}>Tout</button>
         </div>
       `;
@@ -691,7 +757,8 @@
     if(count <= 0) return;
 
     let toSell = amount === 'all' ? count : Math.min(count, amount);
-    const pricePerUnit = state.orePrices[index] || PLANETS[index].basePrice;
+    const basePrice = state.orePrices[index] || PLANETS[index].basePrice;
+    const pricePerUnit = Math.round(basePrice * (1 + state.rd.market * 0.15));
     const totalGain = toSell * pricePerUnit;
 
     state.ores[index] -= toSell;
@@ -705,13 +772,12 @@
   };
 
   document.getElementById("btnSellAllMarket").addEventListener("click", () => {
-    let totalEarned = 0;
-    let totalItems = 0;
-
+    let totalEarned = 0, totalItems = 0;
     PLANETS.forEach((p, i) => {
       const count = state.ores[i] || 0;
       if(count > 0){
-        const price = state.orePrices[i] || p.basePrice;
+        const basePrice = state.orePrices[i] || p.basePrice;
+        const price = Math.round(basePrice * (1 + state.rd.market * 0.15));
         totalEarned += count * price;
         totalItems += count;
         state.ores[i] = 0;
@@ -722,19 +788,120 @@
       state.stardust += totalEarned;
       playSound("buy");
       showToast(`Vendu ${totalItems} minerais pour ${fmt(totalEarned)} poussières !`);
-      refreshUI();
-      renderMarketUI();
-      saveState();
-    } else {
-      showToast("Aucun minerai en stock.");
-    }
+      refreshUI(); renderMarketUI(); saveState();
+    } else showToast("Aucun minerai à vendre.");
   });
 
+  function renderRdUI(){
+    document.getElementById("rdDmAvailable").textContent = state.darkMatter;
+    const list = document.getElementById("rdList");
+    list.innerHTML = "";
+
+    const rdData = [
+      { key: "tactile", name: "🎯 Voie Tactile", desc: "+50 % puissance de clic & +2 % chance minerai rare / niv.", cost: Math.floor(1 * Math.pow(2, state.rd.tactile)) },
+      { key: "auto", name: "🤖 Voie Automatique", desc: "+50 % production passive & -5 % coût satellites / niv.", cost: Math.floor(1 * Math.pow(2, state.rd.auto)) },
+      { key: "market", name: "📈 Voie Boursière", desc: "+15 % prix de revente & prix minimum plus élevé / niv.", cost: Math.floor(1 * Math.pow(2, state.rd.market)) }
+    ];
+
+    rdData.forEach(item => {
+      const currentLvl = state.rd[item.key];
+      const row = document.createElement("div");
+      row.className = "panel-item";
+      row.innerHTML = `
+        <div class="panel-item-info">
+          <div class="panel-item-title">${item.name} <span style="color:var(--cyan); font-size:11.5px;">(Niv. ${currentLvl})</span></div>
+          <div class="panel-item-sub">${item.desc}</div>
+        </div>
+        <button class="buy" onclick="window.buyRd('${item.key}', ${item.cost})" ${state.darkMatter < item.cost ? 'disabled' : ''}>
+          Améliorer <span class="cost" style="color:var(--darkmatter);">${item.cost} ⚛️</span>
+        </button>
+      `;
+      list.appendChild(row);
+    });
+  }
+
+  window.buyRd = function(key, cost){
+    if(state.darkMatter >= cost){
+      state.darkMatter -= cost;
+      state.rd[key]++;
+      playSound("unlock");
+      refreshUI();
+      renderRdUI();
+      saveState();
+    }
+  };
+
+  function renderAscensionUI(){
+    const pending = getDarkMatterGain();
+    const btn = document.getElementById("btnConfirmAscend");
+    document.getElementById("pendingDmGain").textContent = `+${pending} ⚛️`;
+    
+    if(pending > 0){
+      btn.disabled = false;
+      document.getElementById("ascensionConditionText").textContent = "Ascension prête à être déclenchée !";
+    } else {
+      btn.disabled = true;
+      document.getElementById("ascensionConditionText").textContent = "Requis : 100 000 poussières d'étoiles";
+    }
+  }
+
+  document.getElementById("btnConfirmAscend").addEventListener("click", () => {
+    const gain = getDarkMatterGain();
+    if(gain <= 0) return;
+
+    state.darkMatter += gain;
+    state.totalAscensions++;
+    
+    // Réinitialisation de la galaxie
+    state.stardust = 0;
+    state.clickLevel = 0;
+    state.minerLevel = 0;
+    state.multLevel = 0;
+    state.planetIndex = 0;
+    state.ores = [0, 0, 0, 0, 0, 0, 0];
+
+    buildCurrentPlanet3D();
+    playSound("unlock");
+    closeModal("ascensionModal");
+    showToast(`Ascension réussie ! +${gain} Matière Noire absorbée.`);
+    refreshUI();
+    saveState();
+  });
+
+  function renderAchievementsUI(){
+    document.getElementById("totalAchBonus").textContent = `+${Math.round(getAchievementBonus() * 100)}%`;
+    const list = document.getElementById("achievementsList");
+    list.innerHTML = "";
+
+    state.achievements.forEach(a => {
+      const row = document.createElement("div");
+      row.className = "panel-item";
+      row.innerHTML = `
+        <div class="panel-item-info">
+          <div class="panel-item-title">${a.name}</div>
+          <div class="panel-item-sub">${a.desc} (+${Math.round(a.bonus*100)}% Prod)</div>
+        </div>
+        <div class="ach-badge ${a.done ? 'done' : 'todo'}">
+          ${a.done ? '✓ Débloqué' : 'Verrouillé'}
+        </div>
+      `;
+      list.appendChild(row);
+    });
+  }
+
   function refreshUI(){
+    checkAchievements();
+
     stardustCountEl.textContent = fmt(state.stardust);
     clickPowerLabel.textContent = (clickPower() * globalMultiplier()).toFixed(1).replace(/\.0$/,"");
     cpsLabel.textContent = (minerRate() * globalMultiplier()).toFixed(1).replace(/\.0$/,"");
     planetNameHud.textContent = currentPlanet().name;
+
+    const dmDisplay = document.getElementById("dmHudDisplay");
+    if(state.darkMatter > 0 || state.totalAscensions > 0){
+      dmDisplay.style.display = "block";
+      document.getElementById("dmCount").textContent = state.darkMatter;
+    } else dmDisplay.style.display = "none";
 
     lvlClickEl.textContent = state.clickLevel;
     lvlMinerEl.textContent = state.minerLevel;
@@ -762,22 +929,21 @@
       buyPlanetBtn.disabled = true;
     }
 
-    volumeRange.value = state.volume;
-    volumeVal.textContent = Math.round(state.volume * 100) + "%";
-    muteToggle.checked = state.muted;
+    document.getElementById("volumeRange").value = state.volume;
+    document.getElementById("volumeVal").textContent = Math.round(state.volume * 100) + "%";
+    document.getElementById("muteToggle").checked = state.muted;
 
     updateSaveTexts();
   }
 
-  volumeRange.addEventListener("input", (e) => {
+  /* LISTENERS */
+  document.getElementById("volumeRange").addEventListener("input", (e) => {
     state.volume = parseFloat(e.target.value);
-    volumeVal.textContent = Math.round(state.volume * 100) + "%";
+    document.getElementById("volumeVal").textContent = Math.round(state.volume * 100) + "%";
     saveState();
   });
-
-  muteToggle.addEventListener("change", (e) => {
-    state.muted = e.target.checked;
-    saveState();
+  document.getElementById("muteToggle").addEventListener("change", (e) => {
+    state.muted = e.target.checked; saveState();
   });
 
   buyClickBtn.addEventListener("click", () => { const c = clickCost(); if(state.stardust >= c){ state.stardust -= c; state.clickLevel++; playSound("buy"); refreshUI(); saveState(); } });
@@ -792,9 +958,7 @@
         state.planetIndex++;
         buildCurrentPlanet3D();
         playSound("unlock");
-        refreshUI();
-        saveState();
-        burstPlasma(35);
+        refreshUI(); saveState(); burstPlasma(35);
       }
     }
   });
@@ -810,10 +974,21 @@
   document.getElementById("openMarketBtn").addEventListener("click", () => { renderMarketUI(); openModal("marketModal"); });
   document.getElementById("btnCloseMarket").addEventListener("click", () => closeModal("marketModal"));
 
+  document.getElementById("openRdBtn").addEventListener("click", () => { renderRdUI(); openModal("rdModal"); });
+  document.getElementById("btnCloseRd").addEventListener("click", () => closeModal("rdModal"));
+
+  document.getElementById("openAscensionBtn").addEventListener("click", () => { renderAscensionUI(); openModal("ascensionModal"); });
+  document.getElementById("btnCloseAscension").addEventListener("click", () => closeModal("ascensionModal"));
+
+  document.getElementById("openAchBtn").addEventListener("click", () => { renderAchievementsUI(); openModal("achievementsModal"); });
+  document.getElementById("btnCloseAch").addEventListener("click", () => closeModal("achievementsModal"));
+
   document.getElementById("btnStartContinue").addEventListener("click", () => launchGame());
   document.getElementById("btnStartNew").addEventListener("click", () => {
     state.stardust = 0; state.clickLevel = 0; state.minerLevel = 0; state.multLevel = 0; state.planetIndex = 0;
-    state.ores = [0,0,0,0,0,0,0];
+    state.ores = [0,0,0,0,0,0,0]; state.darkMatter = 0; state.totalAscensions = 0; state.totalOresMined = 0;
+    state.rd = { tactile:0, auto:0, market:0 };
+    state.achievements = JSON.parse(JSON.stringify(INITIAL_ACHIEVEMENTS));
     buildCurrentPlanet3D(); refreshUI(); launchGame();
   });
   document.getElementById("btnStartImport").addEventListener("click", () => openModal("importModal"));
@@ -823,7 +998,7 @@
 
   document.getElementById("btnExportSave").addEventListener("click", () => {
     saveState();
-    navigator.clipboard.writeText(btoa(JSON.stringify(state))).then(() => showToast("Code copié !")).catch(() => showToast("Erreur de copie."));
+    navigator.clipboard.writeText(btoa(JSON.stringify(state))).then(() => showToast("Code copié !")).catch(() => showToast("Erreur."));
   });
 
   document.getElementById("btnReturnToStart").addEventListener("click", () => {
@@ -845,23 +1020,19 @@
         const decoded = JSON.parse(atob(input));
         if(typeof decoded.stardust === "number"){
           Object.assign(state, decoded);
-          if(!Array.isArray(state.ores)) state.ores = [0,0,0,0,0,0,0];
           buildCurrentPlanet3D(); refreshUI(); saveState();
-          showToast("Sauvegarde importée !");
+          showToast("Partie importée !");
           closeModal("importModal"); closeModal("pauseMenuModal");
           if(!gameStarted) launchGame();
         }
-      }catch(e){ showToast("Code corrompu."); }
+      }catch(e){ showToast("Code invalide."); }
     }
   });
 
   document.getElementById("btnOpenResetConfirm").addEventListener("click", () => openModal("confirmResetModal"));
   document.getElementById("btnCloseConfirmReset").addEventListener("click", () => closeModal("confirmResetModal"));
   document.getElementById("btnConfirmReset").addEventListener("click", () => {
-    state.stardust = 0; state.clickLevel = 0; state.minerLevel = 0; state.multLevel = 0; state.planetIndex = 0;
-    state.ores = [0,0,0,0,0,0,0];
-    localStorage.removeItem(SAVE_KEY); buildCurrentPlanet3D(); refreshUI();
-    showToast("Partie réinitialisée."); closeModal("confirmResetModal"); closeModal("pauseMenuModal");
+    localStorage.removeItem(SAVE_KEY); location.reload();
   });
 
   function spawnFloater(x, y, text, color = "var(--stardust)"){
@@ -886,24 +1057,13 @@
 
   scene.add(new THREE.AmbientLight(0x222638, 1.4));
   const lightMain = new THREE.DirectionalLight(0xffffff, 2.0);
-  lightMain.position.set(5, 4, 5);
-  scene.add(lightMain);
+  lightMain.position.set(5, 4, 5); scene.add(lightMain);
 
-  const lightCyan = new THREE.PointLight(0x3ddbd9, 3, 20);
-  lightCyan.position.set(4, -2, 4);
-  scene.add(lightCyan);
-
-  const lightViolet = new THREE.PointLight(0x9b7fd4, 2.5, 20);
-  lightViolet.position.set(-4, 3, -3);
-  scene.add(lightViolet);
-
-  const starCount = 2200;
   const starGeo = new THREE.BufferGeometry();
-  const starPos = new Float32Array(starCount * 3);
-  for(let i=0; i<starCount*3; i++){ starPos[i] = (Math.random() - 0.5) * 60; }
+  const starPos = new Float32Array(2200 * 3);
+  for(let i=0; i<2200*3; i++){ starPos[i] = (Math.random() - 0.5) * 60; }
   starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
-  const starMat = new THREE.PointsMaterial({ size: 0.05, color: 0xffffff, transparent: true, opacity: 0.75 });
-  const starField = new THREE.Points(starGeo, starMat);
+  const starField = new THREE.Points(starGeo, new THREE.PointsMaterial({ size: 0.05, color: 0xffffff, transparent: true, opacity: 0.75 }));
   scene.add(starField);
 
   const coreGroup = new THREE.Group();
@@ -934,202 +1094,73 @@
       const pos = geo.attributes.position;
       for(let i=0; i<pos.count; i++){
         const v = new THREE.Vector3(pos.getX(i), pos.getY(i), pos.getZ(i));
-        const bump = (Math.sin(v.x*4) + Math.cos(v.y*4) + Math.sin(v.z*4)) * 0.08;
-        v.multiplyScalar(1 + bump);
+        v.multiplyScalar(1 + (Math.sin(v.x*4) + Math.cos(v.y*4) + Math.sin(v.z*4)) * 0.08);
         pos.setXYZ(i, v.x, v.y, v.z);
       }
       geo.computeVertexNormals();
-
-      const mat = new THREE.MeshStandardMaterial({
-        color: 0x7c8596, roughness: 0.9, metalness: 0.1, flatShading: true
-      });
-      planetClickTarget = new THREE.Mesh(geo, mat);
+      planetClickTarget = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: 0x7c8596, roughness: 0.9, flatShading: true }));
       coreGroup.add(planetClickTarget);
-
-      const debrisGeo = new THREE.DodecahedronGeometry(0.04, 0);
-      const debrisMat = new THREE.MeshStandardMaterial({ color:0x555d6b, roughness:0.9 });
-      const debrisGroup = new THREE.Group();
-
-      for(let i=0; i<25; i++){
-        const d = new THREE.Mesh(debrisGeo, debrisMat);
-        const radius = 1.9 + Math.random()*0.6;
-        const angle = Math.random() * Math.PI * 2;
-        d.position.set(Math.cos(angle)*radius, (Math.random()-0.5)*0.5, Math.sin(angle)*radius);
-        debrisGroup.add(d);
-      }
-      coreGroup.add(debrisGroup);
-      dynamicElements.push({ obj: debrisGroup, rotY: 0.2 });
 
     } else if(idx === 1){
-      const geo = new THREE.IcosahedronGeometry(1.45, 4);
-      const mat = new THREE.MeshStandardMaterial({
-        color: 0x0066cc, roughness: 0.1, metalness: 0.8, emissive: 0x001133, emissiveIntensity: 0.3
-      });
-      planetClickTarget = new THREE.Mesh(geo, mat);
+      planetClickTarget = new THREE.Mesh(new THREE.IcosahedronGeometry(1.45, 4), new THREE.MeshStandardMaterial({ color: 0x0066cc, roughness: 0.1, metalness: 0.8 }));
       coreGroup.add(planetClickTarget);
 
-      const cloudGeo = new THREE.IcosahedronGeometry(1.49, 3);
-      const cloudMat = new THREE.MeshStandardMaterial({
-        color: 0xffffff, transparent: true, opacity: 0.35, wireframe: true
-      });
-      const clouds = new THREE.Mesh(cloudGeo, cloudMat);
-      coreGroup.add(clouds);
-      dynamicElements.push({ obj: clouds, rotY: 0.3, rotX: 0.05 });
-
-      const ringGeo = new THREE.RingGeometry(1.9, 2.3, 48);
-      const ringMat = new THREE.MeshBasicMaterial({ color: 0x3ddbd9, side: THREE.DoubleSide, transparent: true, opacity: 0.5 });
-      const ring = new THREE.Mesh(ringGeo, ringMat);
-      ring.rotation.x = Math.PI / 2.2;
-      coreGroup.add(ring);
+      const clouds = new THREE.Mesh(new THREE.IcosahedronGeometry(1.49, 3), new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0.35, wireframe: true }));
+      coreGroup.add(clouds); dynamicElements.push({ obj: clouds, rotY: 0.3 });
 
     } else if(idx === 2){
-      const geo = new THREE.SphereGeometry(1.4, 32, 32);
-      const mat = new THREE.MeshStandardMaterial({
-        color: 0xe67e22, roughness: 0.6, metalness: 0.1, emissive: 0x441100, emissiveIntensity: 0.4
-      });
-      planetClickTarget = new THREE.Mesh(geo, mat);
+      planetClickTarget = new THREE.Mesh(new THREE.SphereGeometry(1.4, 32, 32), new THREE.MeshStandardMaterial({ color: 0xe67e22, roughness: 0.6 }));
       coreGroup.add(planetClickTarget);
 
-      const ringGeo1 = new THREE.RingGeometry(1.8, 2.5, 64);
-      const ringMat1 = new THREE.MeshBasicMaterial({ color: 0xf5c542, side: THREE.DoubleSide, transparent: true, opacity: 0.7 });
-      const ring1 = new THREE.Mesh(ringGeo1, ringMat1);
-      ring1.rotation.x = Math.PI / 2.3;
-      coreGroup.add(ring1);
-
-      const ringGeo2 = new THREE.RingGeometry(2.6, 3.1, 64);
-      const ringMat2 = new THREE.MeshBasicMaterial({ color: 0xd35400, side: THREE.DoubleSide, transparent: true, opacity: 0.45 });
-      const ring2 = new THREE.Mesh(ringGeo2, ringMat2);
-      ring2.rotation.x = Math.PI / 2.3;
-      coreGroup.add(ring2);
+      const ring = new THREE.Mesh(new THREE.RingGeometry(1.8, 2.5, 64), new THREE.MeshBasicMaterial({ color: 0xf5c542, side: THREE.DoubleSide, transparent: true, opacity: 0.7 }));
+      ring.rotation.x = Math.PI / 2.3; coreGroup.add(ring);
 
     } else if(idx === 3){
-      const geo = new THREE.OctahedronGeometry(1.3, 2);
-      const mat = new THREE.MeshStandardMaterial({
-        color: 0x9b59b6, roughness: 0.05, metalness: 0.95, emissive: 0x4a0e4e, emissiveIntensity: 0.6, flatShading: true
-      });
-      planetClickTarget = new THREE.Mesh(geo, mat);
+      planetClickTarget = new THREE.Mesh(new THREE.OctahedronGeometry(1.3, 2), new THREE.MeshStandardMaterial({ color: 0x9b59b6, roughness: 0.05, metalness: 0.95, flatShading: true }));
       coreGroup.add(planetClickTarget);
-
-      const shardsGroup = new THREE.Group();
-      const shardGeo = new THREE.OctahedronGeometry(0.18, 0);
-      const shardMat = new THREE.MeshStandardMaterial({ color: 0xff53a5, roughness: 0.1, metalness: 0.9, flatShading: true });
-
-      for(let i=0; i<12; i++){
-        const shard = new THREE.Mesh(shardGeo, shardMat);
-        const angle = (i / 12) * Math.PI * 2;
-        const radius = 2.1 + (i % 2)*0.3;
-        shard.position.set(Math.cos(angle)*radius, (i%3 - 1)*0.4, Math.sin(angle)*radius);
-        shardsGroup.add(shard);
-      }
-      coreGroup.add(shardsGroup);
-      dynamicElements.push({ obj: shardsGroup, rotY: -0.4, rotZ: 0.1 });
 
     } else if(idx === 4){
-      const geo = new THREE.SphereGeometry(1.15, 32, 32);
-      const mat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-      planetClickTarget = new THREE.Mesh(geo, mat);
+      planetClickTarget = new THREE.Mesh(new THREE.SphereGeometry(1.15, 32, 32), new THREE.MeshBasicMaterial({ color: 0xffffff }));
       coreGroup.add(planetClickTarget);
 
-      const auraGeo = new THREE.SphereGeometry(1.35, 32, 32);
-      const auraMat = new THREE.MeshBasicMaterial({ color: 0x9b7fd4, transparent: true, opacity: 0.45, wireframe: true });
-      const aura = new THREE.Mesh(auraGeo, auraMat);
-      coreGroup.add(aura);
-      dynamicElements.push({ obj: aura, rotY: 0.8, pulse: true });
-
-      const ringGeo = new THREE.TorusGeometry(2.0, 0.05, 16, 64);
-      const ringMat = new THREE.MeshBasicMaterial({ color: 0xff53a5 });
-      const ring = new THREE.Mesh(ringGeo, ringMat);
-      ring.rotation.x = Math.PI / 2;
-      coreGroup.add(ring);
+      const aura = new THREE.Mesh(new THREE.SphereGeometry(1.35, 32, 32), new THREE.MeshBasicMaterial({ color: 0x9b7fd4, transparent: true, opacity: 0.45, wireframe: true }));
+      coreGroup.add(aura); dynamicElements.push({ obj: aura, pulse: true });
 
     } else if(idx === 5){
-      const geo = new THREE.SphereGeometry(1.0, 32, 32);
-      const mat = new THREE.MeshStandardMaterial({ color: 0x3ddbd9, emissive: 0x00ffff, emissiveIntensity: 1.2 });
-      planetClickTarget = new THREE.Mesh(geo, mat);
+      planetClickTarget = new THREE.Mesh(new THREE.SphereGeometry(1.0, 32, 32), new THREE.MeshStandardMaterial({ color: 0x3ddbd9, emissive: 0x00ffff, emissiveIntensity: 1.2 }));
       coreGroup.add(planetClickTarget);
-
-      const jetGeo = new THREE.CylinderGeometry(0.02, 0.6, 5, 16, 1, true);
-      const jetMat = new THREE.MeshBasicMaterial({ color: 0x3ddbd9, transparent: true, opacity: 0.65, side: THREE.DoubleSide });
-
-      const jetTop = new THREE.Mesh(jetGeo, jetMat);
-      jetTop.position.y = 2.5;
-      coreGroup.add(jetTop);
-
-      const jetBottom = new THREE.Mesh(jetGeo, jetMat);
-      jetBottom.position.y = -2.5;
-      jetBottom.rotation.z = Math.PI;
-      coreGroup.add(jetBottom);
-
-      const ringGeo = new THREE.TorusGeometry(2.1, 0.06, 16, 64);
-      const ringMat = new THREE.MeshBasicMaterial({ color: 0xf5c542, wireframe: true });
-      const ring = new THREE.Mesh(ringGeo, ringMat);
-      ring.rotation.x = Math.PI / 2.8;
-      coreGroup.add(ring);
 
     } else if(idx === 6){
-      const geo = new THREE.SphereGeometry(1.2, 32, 32);
-      const mat = new THREE.MeshBasicMaterial({ color: 0x000000 });
-      planetClickTarget = new THREE.Mesh(geo, mat);
+      planetClickTarget = new THREE.Mesh(new THREE.SphereGeometry(1.2, 32, 32), new THREE.MeshBasicMaterial({ color: 0x000000 }));
       coreGroup.add(planetClickTarget);
 
-      const haloGeo = new THREE.SphereGeometry(1.26, 32, 32);
-      const haloMat = new THREE.MeshBasicMaterial({ color: 0xff3300, transparent: true, opacity: 0.35, wireframe: true });
-      coreGroup.add(new THREE.Mesh(haloGeo, haloMat));
-
-      const ringGeo = new THREE.RingGeometry(1.5, 3.5, 64);
-      const ringMat = new THREE.MeshBasicMaterial({ color: 0xff4500, side: THREE.DoubleSide, transparent: true, opacity: 0.85 });
-      const ring = new THREE.Mesh(ringGeo, ringMat);
-      ring.rotation.x = Math.PI / 2.3;
-      coreGroup.add(ring);
-
-      const pCount = 150;
-      const pGeo = new THREE.BufferGeometry();
-      const pPos = new Float32Array(pCount * 3);
-      for(let i=0; i<pCount; i++){
-        const angle = Math.random() * Math.PI * 2;
-        const r = 1.4 + Math.random()*2.0;
-        pPos[i*3] = Math.cos(angle)*r;
-        pPos[i*3+1] = (Math.random()-0.5)*0.2;
-        pPos[i*3+2] = Math.sin(angle)*r;
-      }
-      pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-      const pMat = new THREE.PointsMaterial({ size: 0.06, color: 0xffa500 });
-      const particlesAcc = new THREE.Points(pGeo, pMat);
-      particlesAcc.rotation.x = Math.PI / 2.3;
-      coreGroup.add(particlesAcc);
-      dynamicElements.push({ obj: particlesAcc, rotZ: 1.2 });
+      const ring = new THREE.Mesh(new THREE.RingGeometry(1.5, 3.5, 64), new THREE.MeshBasicMaterial({ color: 0xff4500, side: THREE.DoubleSide, transparent: true, opacity: 0.85 }));
+      ring.rotation.x = Math.PI / 2.3; coreGroup.add(ring);
     }
   }
 
   const particles = [];
   function burstPlasma(count){
     for(let i=0; i<count; i++){
-      const pgeo = new THREE.TetrahedronGeometry(0.04 + Math.random()*0.05, 0);
-      const color = [0xf5c542, 0x3ddbd9, 0xff53a5, 0x9b7fd4][Math.floor(Math.random()*4)];
-      const pmat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 1 });
-      const p = new THREE.Mesh(pgeo, pmat);
-      p.position.set(0,0,0);
-
-      const dir = new THREE.Vector3((Math.random()-0.5), (Math.random()-0.5), (Math.random()-0.5)).normalize();
-      p.userData = { dir, speed: 1.8 + Math.random()*2.8, life: 0, maxLife: 0.5 + Math.random()*0.4 };
-      coreGroup.add(p);
-      particles.push(p);
+      const p = new THREE.Mesh(
+        new THREE.TetrahedronGeometry(0.04 + Math.random()*0.05, 0),
+        new THREE.MeshBasicMaterial({ color: [0xf5c542, 0x3ddbd9, 0xff53a5, 0xa55eea][Math.floor(Math.random()*4)], transparent: true, opacity: 1 })
+      );
+      p.userData = { dir: new THREE.Vector3((Math.random()-0.5), (Math.random()-0.5), (Math.random()-0.5)).normalize(), speed: 1.8 + Math.random()*2.8, life: 0, maxLife: 0.5 + Math.random()*0.4 };
+      coreGroup.add(p); particles.push(p);
     }
   }
 
   window.addEventListener("resize", () => {
-    camera.aspect = window.innerWidth/window.innerHeight;
-    camera.updateProjectionMatrix();
+    camera.aspect = window.innerWidth/window.innerHeight; camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
 
-  const raycaster = new THREE.Raycaster();
-  const mouse = new THREE.Vector2();
+  const raycaster = new THREE.Raycaster(), mouse = new THREE.Vector2();
   let pulseUntil = 0;
 
   function onPointerDown(evt){
     if(!gameStarted || !planetClickTarget || document.querySelector(".modal-overlay.active")) return;
-
     initAudioCtx();
 
     const rect = renderer.domElement.getBoundingClientRect();
@@ -1146,10 +1177,10 @@
       state.stardust += gain;
       playSound("click");
 
-      // 12% de chance d'obtenir un minerai rare
-      if(Math.random() < 0.12){
+      if(Math.random() < rareOreChance()){
         const currentP = state.planetIndex;
         state.ores[currentP] = (state.ores[currentP] || 0) + 1;
+        state.totalOresMined++;
         spawnFloater(cx, cy - 25, "+1 " + PLANETS[currentP].oreName + " !", "var(--pink)");
         playSound("rare");
       }
@@ -1162,76 +1193,56 @@
   }
   renderer.domElement.addEventListener("pointerdown", onPointerDown);
 
-  /* BOUCLE PRINCIPALE D'ANIMATION */
-  let last = performance.now();
-  let autoAccum = 0;
-
+  /* ANIMATION LOOP */
+  let last = performance.now(), autoAccum = 0;
   function animate(now){
     requestAnimationFrame(animate);
-    const dt = Math.min((now - last)/1000, 0.1);
-    last = now;
+    const dt = Math.min((now - last)/1000, 0.1); last = now;
 
     starField.rotation.y += dt * 0.012;
     coreGroup.rotation.y += dt * 0.25;
 
     dynamicElements.forEach(item => {
       if(item.rotY) item.obj.rotation.y += dt * item.rotY;
-      if(item.rotX) item.obj.rotation.x += dt * item.rotX;
-      if(item.rotZ) item.obj.rotation.z += dt * item.rotZ;
       if(item.pulse){
         const scale = 1 + Math.sin(now * 0.004) * 0.06;
         item.obj.scale.set(scale, scale, scale);
       }
     });
 
-    const scaleTarget = now < pulseUntil ? 1.15 : 1.0;
-    const s = THREE.MathUtils.lerp(coreGroup.scale.x, scaleTarget, 0.25);
+    const s = THREE.MathUtils.lerp(coreGroup.scale.x, now < pulseUntil ? 1.15 : 1.0, 0.25);
     coreGroup.scale.set(s,s,s);
 
     for(let i = particles.length - 1; i >= 0; i--){
-      const p = particles[i];
-      p.userData.life += dt;
+      const p = particles[i]; p.userData.life += dt;
       const t = p.userData.life / p.userData.maxLife;
       if(t >= 1){ coreGroup.remove(p); particles.splice(i,1); continue; }
       p.position.addScaledVector(p.userData.dir, p.userData.speed * dt);
-      p.userData.speed *= 0.92;
-      p.material.opacity = 1 - t;
+      p.userData.speed *= 0.92; p.material.opacity = 1 - t;
     }
 
     if(gameStarted){
       autoAccum += minerRate() * globalMultiplier() * dt;
       if(autoAccum >= 0.05){
-        state.stardust += autoAccum;
-        autoAccum = 0;
-        refreshUI();
+        state.stardust += autoAccum; autoAccum = 0; refreshUI();
       }
     }
 
     renderer.render(scene, camera);
   }
 
-  const hasSave = loadState();
-  if(hasSave) document.getElementById("btnStartContinue").disabled = false;
-
-  buildCurrentPlanet3D();
-  refreshUI();
-  requestAnimationFrame(animate);
+  if(loadState()) document.getElementById("btnStartContinue").disabled = false;
+  buildCurrentPlanet3D(); refreshUI(); requestAnimationFrame(animate);
 
   setInterval(() => { if(gameStarted) saveState(false); }, 10000);
-
-  // Compteur du marché boursier (30 secondes)
   setInterval(() => {
     if(!gameStarted) return;
     marketCountdown--;
     const timerEl = document.getElementById("marketTimer");
     if(timerEl) timerEl.textContent = marketCountdown;
-
     if(marketCountdown <= 0){
-      marketCountdown = 30;
-      updateMarketPrices();
-      if(document.getElementById("marketModal").classList.contains("active")){
-        renderMarketUI();
-      }
+      marketCountdown = 30; updateMarketPrices();
+      if(document.getElementById("marketModal").classList.contains("active")) renderMarketUI();
     }
   }, 1000);
 })();
