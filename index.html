@@ -16,6 +16,7 @@
     --violet: #9b7fd4;
     --pink: #ff53a5;
     --danger: #ff4757;
+    --success: #2ed573;
     --text: #eef1f6;
     --text-dim: #7f89a1;
   }
@@ -129,7 +130,7 @@
   .card .level b{ color:var(--stardust); }
   
   .buy{
-    margin-top:4px; border:none; border-radius:8px; padding:9px 12px;
+    margin-top:4px; border:none; border-radius:8px; padding:8px 12px;
     font-family:'Inter',sans-serif; font-weight:600; font-size:12.5px;
     background: linear-gradient(135deg, rgba(155, 127, 212, 0.2), rgba(61, 219, 217, 0.1));
     border:1px solid rgba(155, 127, 212, 0.35); color: var(--text);
@@ -195,6 +196,22 @@
   .audio-slider{
     width: 100%; accent-color: var(--cyan); cursor: pointer;
   }
+
+  /* Market UI Styles */
+  .market-row{
+    background: rgba(4, 5, 10, 0.5);
+    border: 1px solid var(--panel-border);
+    border-radius: 12px; padding: 12px 14px;
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  }
+  .market-info{ flex: 1; display: flex; flex-direction: column; gap: 2px; }
+  .market-title{ font-size: 13.5px; font-weight: 600; color: var(--text); }
+  .market-qty{ font-size: 11.5px; color: var(--text-dim); }
+  .market-price{ font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 4px; }
+  .market-price.trend-up{ color: var(--success); }
+  .market-price.trend-down{ color: var(--danger); }
+  .market-price.trend-flat{ color: var(--text-dim); }
+  .market-actions{ display: flex; gap: 6px; }
 
   .btn-action{
     border:1px solid var(--panel-border);
@@ -277,12 +294,13 @@
 </div>
 
 <div class="hud-controls-right" id="hudControlsRight" style="display:none;">
+  <button class="hud-btn" id="openMarketBtn">📈 Marché</button>
   <button class="hud-btn" id="openPauseMenuBtn">⚙️ Menu</button>
 </div>
 
 <button class="hud-btn shop-toggle" id="shopToggle" style="display:none;">Passerelle de Commandement ▴</button>
 
-<div class="hint">Extracteur cosmique : cliquez sur l'astre central pour récolter de la matière.</div>
+<div class="hint">Extracteur cosmique : cliquez sur l'astre central pour récolter de la matière et des minerais rares.</div>
 
 <!-- SHOP -->
 <div class="shop" id="shop">
@@ -315,7 +333,7 @@
   </div>
 </div>
 
-<!-- POP-UPS STANDARD -->
+<!-- POP-UPS STANDARD & MODALES -->
 <div class="modal-overlay active" id="startMenuModal">
   <div class="modal-box">
     <div class="modal-header">
@@ -328,6 +346,26 @@
       <button class="btn-action" id="btnStartImport">📥 Importer un Code</button>
     </div>
     <div class="modal-subtitle" id="startSaveInfo" style="text-align:center;">Aucune sauvegarde détectée</div>
+  </div>
+</div>
+
+<!-- MARCHÉ INTERGALACTIQUE MODAL -->
+<div class="modal-overlay" id="marketModal">
+  <div class="modal-box" style="max-width:540px;">
+    <div class="modal-header">
+      <h2 class="modal-title" style="color:var(--cyan)">MARCHÉ INTERGALACTIQUE</h2>
+      <div class="modal-subtitle">Négociez vos minerais rares. Les cours changent toutes les 30 secondes !</div>
+      <div style="font-size:12px; color:var(--stardust); margin-top:6px; font-weight:600;">
+        ⏳ Fluctuation des cours dans : <span id="marketTimer">30</span>s
+      </div>
+    </div>
+    <div id="marketList" style="display:flex; flex-direction:column; gap:10px; max-height:45vh; overflow-y:auto; padding-right:4px;">
+      <!-- Généré dynamiquement en JS -->
+    </div>
+    <div class="modal-options" style="margin-top:8px;">
+      <button class="btn-action primary" id="btnSellAllMarket">💰 Tout Vendre</button>
+    </div>
+    <button class="btn-link" id="btnCloseMarket">Fermer la Bourse</button>
   </div>
 </div>
 
@@ -397,13 +435,13 @@
   "use strict";
 
   const PLANETS = [
-    { name: "Astéroïde Stérile", cost: 0, multiplier: 1, desc: "Rocher spatial météoritique riche en débris brut." },
-    { name: "Planète Océan", cost: 500, multiplier: 5, desc: "Monde aquatique à couche nuageuse et anneaux d'eau. Gains x5." },
-    { name: "Géante Gazeuse", cost: 5000, multiplier: 25, desc: "Colosse atmosphérique aux anneaux dorés étincelants. Gains x25." },
-    { name: "Exoplanète de Cristal", cost: 50000, multiplier: 120, desc: "Structure cristalline aux éclats flottants en orbite. Gains x120." },
-    { name: "Étoile à Neutrons", cost: 500000, multiplier: 750, desc: "Cœur stellaire incandescent entouré d'une corona d'énergie. Gains x750." },
-    { name: "Pulsar Magnétique", cost: 5000000, multiplier: 5000, desc: "Astre magnétique projetant deux faisceaux de lumière. Gains x5 000." },
-    { name: "Trou Noir Supermassif", cost: 50000000, multiplier: 35000, desc: "Singularité dévorante entourée d'un vortex d'accrétion. Gains x35 000." }
+    { name: "Astéroïde Stérile", cost: 0, multiplier: 1, desc: "Rocher spatial météoritique riche en débris brut.", oreName: "Régolithe Brut", basePrice: 15, icon: "🪨" },
+    { name: "Planète Océan", cost: 500, multiplier: 5, desc: "Monde aquatique à couche nuageuse et anneaux d'eau. Gains x5.", oreName: "Eau Lourde Quantique", basePrice: 120, icon: "💧" },
+    { name: "Géante Gazeuse", cost: 5000, multiplier: 25, desc: "Colosse atmosphérique aux anneaux dorés étincelants. Gains x25.", oreName: "Hélium-3 Dense", basePrice: 900, icon: "☁️" },
+    { name: "Exoplanète de Cristal", cost: 50000, multiplier: 120, desc: "Structure cristalline aux éclats flottants en orbite. Gains x120.", oreName: "Quartz Incandescent", basePrice: 7500, icon: "💎" },
+    { name: "Étoile à Neutrons", cost: 500000, multiplier: 750, desc: "Cœur stellaire incandescent entouré d'une corona d'énergie. Gains x750.", oreName: "Neutronium Pur", basePrice: 60000, icon: "⚡" },
+    { name: "Pulsar Magnétique", cost: 5000000, multiplier: 5000, desc: "Astre magnétique projetant deux faisceaux de lumière. Gains x5 000.", oreName: "Matière Polarisée", basePrice: 500000, icon: "🧲" },
+    { name: "Trou Noir Supermassif", cost: 50000000, multiplier: 35000, desc: "Singularité dévorante entourée d'un vortex d'accrétion. Gains x35 000.", oreName: "Cœur de Singularité", basePrice: 4000000, icon: "🕳️" }
   ];
 
   const state = { 
@@ -413,11 +451,15 @@
     multLevel: 0, 
     planetIndex: 0,
     volume: 0.7,
-    muted: false
+    muted: false,
+    ores: [0, 0, 0, 0, 0, 0, 0],
+    orePrices: [15, 120, 900, 7500, 60000, 500000, 4000000],
+    oreTrends: [0, 0, 0, 0, 0, 0, 0]
   };
 
   let gameStarted = false, lastSaveTime = null;
-  const SAVE_KEY = "cosmos-save-v4";
+  let marketCountdown = 30;
+  const SAVE_KEY = "cosmos-save-v5";
 
   /* MOTEUR AUDIO SYNTHÉTIQUE (Web Audio API) */
   let audioCtx = null;
@@ -441,7 +483,6 @@
     masterGain.connect(audioCtx.destination);
 
     if(type === "click"){
-      // Bip résonnant d'extraction
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.type = "sine";
@@ -456,9 +497,25 @@
       osc.start(now);
       osc.stop(now + 0.08);
 
+    } else if(type === "rare"){
+      const freqs = [523.25, 659.25, 783.99, 1046.50];
+      freqs.forEach((f, idx) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(f, now + idx * 0.03);
+
+        gain.gain.setValueAtTime(0.2, now + idx * 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.03 + 0.12);
+
+        osc.connect(gain);
+        gain.connect(masterGain);
+        osc.start(now + idx * 0.03);
+        osc.stop(now + idx * 0.03 + 0.12);
+      });
+
     } else if(type === "buy"){
-      // Accord montant d'amélioration
-      const freqs = [440, 554.37, 659.25]; // A4, C#5, E4
+      const freqs = [440, 554.37, 659.25];
       freqs.forEach((f, idx) => {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
@@ -475,7 +532,6 @@
       });
 
     } else if(type === "unlock"){
-      // Balayage harmonique pour nouvel astre
       const freqs = [261.63, 329.63, 392.00, 523.25, 659.25];
       freqs.forEach((f, idx) => {
         const osc = audioCtx.createOscillator();
@@ -514,6 +570,16 @@
     setTimeout(() => toast.classList.remove("show"), 2600);
   }
 
+  function updateMarketPrices(){
+    PLANETS.forEach((p, idx) => {
+      const oldPrice = state.orePrices[idx] || p.basePrice;
+      const factor = 0.55 + Math.random() * 0.90;
+      const newPrice = Math.max(1, Math.round(p.basePrice * factor));
+      state.orePrices[idx] = newPrice;
+      state.oreTrends[idx] = newPrice > oldPrice ? 1 : (newPrice < oldPrice ? -1 : 0);
+    });
+  }
+
   function saveState(manual = false){
     try{
       localStorage.setItem(SAVE_KEY, JSON.stringify(state));
@@ -526,7 +592,14 @@
   function loadState(){
     try{
       const raw = localStorage.getItem(SAVE_KEY);
-      if(raw){ Object.assign(state, JSON.parse(raw)); lastSaveTime = new Date(); return true; }
+      if(raw){ 
+        Object.assign(state, JSON.parse(raw)); 
+        if(!Array.isArray(state.ores)) state.ores = [0,0,0,0,0,0,0];
+        if(!Array.isArray(state.orePrices)) state.orePrices = PLANETS.map(p => p.basePrice);
+        if(!Array.isArray(state.oreTrends)) state.oreTrends = [0,0,0,0,0,0,0];
+        lastSaveTime = new Date(); 
+        return true; 
+      }
     }catch(e){}
     return false;
   }
@@ -579,6 +652,83 @@
     while(num >= 1000 && u < units.length - 1){ num /= 1000; u++; }
     return num.toFixed(num < 10 ? 2 : 1) + units[u];
   }
+
+  function renderMarketUI(){
+    const list = document.getElementById("marketList");
+    if(!list) return;
+    list.innerHTML = "";
+
+    PLANETS.forEach((p, i) => {
+      if(i > state.planetIndex) return;
+
+      const count = state.ores[i] || 0;
+      const price = state.orePrices[i] || p.basePrice;
+      const trend = state.oreTrends[i] || 0;
+      const trendIcon = trend > 0 ? "▲" : (trend < 0 ? "▼" : "•");
+      const trendClass = trend > 0 ? "trend-up" : (trend < 0 ? "trend-down" : "trend-flat");
+
+      const row = document.createElement("div");
+      row.className = "market-row";
+      row.innerHTML = `
+        <div class="market-info">
+          <div class="market-title">${p.icon} <b>${p.oreName}</b></div>
+          <div class="market-qty">Stock : <b style="color:var(--stardust);">${count}</b></div>
+        </div>
+        <div class="market-price ${trendClass}">
+          ${fmt(price)} poussières <span style="font-size:11px;">${trendIcon}</span>
+        </div>
+        <div class="market-actions">
+          <button class="buy" onclick="window.sellOre(${i}, 1)" ${count < 1 ? 'disabled' : ''}>Vendre 1</button>
+          <button class="buy" onclick="window.sellOre(${i}, 'all')" ${count < 1 ? 'disabled' : ''}>Tout</button>
+        </div>
+      `;
+      list.appendChild(row);
+    });
+  }
+
+  window.sellOre = function(index, amount){
+    const count = state.ores[index] || 0;
+    if(count <= 0) return;
+
+    let toSell = amount === 'all' ? count : Math.min(count, amount);
+    const pricePerUnit = state.orePrices[index] || PLANETS[index].basePrice;
+    const totalGain = toSell * pricePerUnit;
+
+    state.ores[index] -= toSell;
+    state.stardust += totalGain;
+
+    playSound("buy");
+    showToast(`Vendu ${toSell}x ${PLANETS[index].oreName} pour ${fmt(totalGain)} poussières !`);
+    refreshUI();
+    renderMarketUI();
+    saveState();
+  };
+
+  document.getElementById("btnSellAllMarket").addEventListener("click", () => {
+    let totalEarned = 0;
+    let totalItems = 0;
+
+    PLANETS.forEach((p, i) => {
+      const count = state.ores[i] || 0;
+      if(count > 0){
+        const price = state.orePrices[i] || p.basePrice;
+        totalEarned += count * price;
+        totalItems += count;
+        state.ores[i] = 0;
+      }
+    });
+
+    if(totalItems > 0){
+      state.stardust += totalEarned;
+      playSound("buy");
+      showToast(`Vendu ${totalItems} minerais pour ${fmt(totalEarned)} poussières !`);
+      refreshUI();
+      renderMarketUI();
+      saveState();
+    } else {
+      showToast("Aucun minerai en stock.");
+    }
+  });
 
   function refreshUI(){
     stardustCountEl.textContent = fmt(state.stardust);
@@ -657,9 +807,13 @@
     shopToggle.textContent = shopOpen ? "Passerelle de Commandement ▾" : "Passerelle de Commandement ▴";
   });
 
+  document.getElementById("openMarketBtn").addEventListener("click", () => { renderMarketUI(); openModal("marketModal"); });
+  document.getElementById("btnCloseMarket").addEventListener("click", () => closeModal("marketModal"));
+
   document.getElementById("btnStartContinue").addEventListener("click", () => launchGame());
   document.getElementById("btnStartNew").addEventListener("click", () => {
     state.stardust = 0; state.clickLevel = 0; state.minerLevel = 0; state.multLevel = 0; state.planetIndex = 0;
+    state.ores = [0,0,0,0,0,0,0];
     buildCurrentPlanet3D(); refreshUI(); launchGame();
   });
   document.getElementById("btnStartImport").addEventListener("click", () => openModal("importModal"));
@@ -691,6 +845,7 @@
         const decoded = JSON.parse(atob(input));
         if(typeof decoded.stardust === "number"){
           Object.assign(state, decoded);
+          if(!Array.isArray(state.ores)) state.ores = [0,0,0,0,0,0,0];
           buildCurrentPlanet3D(); refreshUI(); saveState();
           showToast("Sauvegarde importée !");
           closeModal("importModal"); closeModal("pauseMenuModal");
@@ -704,14 +859,16 @@
   document.getElementById("btnCloseConfirmReset").addEventListener("click", () => closeModal("confirmResetModal"));
   document.getElementById("btnConfirmReset").addEventListener("click", () => {
     state.stardust = 0; state.clickLevel = 0; state.minerLevel = 0; state.multLevel = 0; state.planetIndex = 0;
+    state.ores = [0,0,0,0,0,0,0];
     localStorage.removeItem(SAVE_KEY); buildCurrentPlanet3D(); refreshUI();
     showToast("Partie réinitialisée."); closeModal("confirmResetModal"); closeModal("pauseMenuModal");
   });
 
-  function spawnFloater(x, y, value){
+  function spawnFloater(x, y, text, color = "var(--stardust)"){
     const el = document.createElement("div");
     el.className = "floater"; el.style.left = x + "px"; el.style.top = y + "px";
-    el.textContent = "+" + (value < 10 ? value.toFixed(1) : Math.round(value));
+    if(color) el.style.color = color;
+    el.textContent = typeof text === "number" ? ("+" + (text < 10 ? text.toFixed(1) : Math.round(text))) : text;
     document.body.appendChild(el);
     setTimeout(() => el.remove(), 850);
   }
@@ -988,6 +1145,15 @@
       const gain = clickPower() * globalMultiplier();
       state.stardust += gain;
       playSound("click");
+
+      // 12% de chance d'obtenir un minerai rare
+      if(Math.random() < 0.12){
+        const currentP = state.planetIndex;
+        state.ores[currentP] = (state.ores[currentP] || 0) + 1;
+        spawnFloater(cx, cy - 25, "+1 " + PLANETS[currentP].oreName + " !", "var(--pink)");
+        playSound("rare");
+      }
+
       refreshUI();
       spawnFloater(cx, cy, gain);
       burstPlasma(12);
@@ -1052,6 +1218,22 @@
   requestAnimationFrame(animate);
 
   setInterval(() => { if(gameStarted) saveState(false); }, 10000);
+
+  // Compteur du marché boursier (30 secondes)
+  setInterval(() => {
+    if(!gameStarted) return;
+    marketCountdown--;
+    const timerEl = document.getElementById("marketTimer");
+    if(timerEl) timerEl.textContent = marketCountdown;
+
+    if(marketCountdown <= 0){
+      marketCountdown = 30;
+      updateMarketPrices();
+      if(document.getElementById("marketModal").classList.contains("active")){
+        renderMarketUI();
+      }
+    }
+  }, 1000);
 })();
 </script>
 </body>
